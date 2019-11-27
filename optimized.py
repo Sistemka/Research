@@ -1,9 +1,10 @@
+import os
+import time
+
 from keras.models import load_model
 from PIL import Image
 import tensorflow as tf
 import numpy as np
-import os
-import time
 
 model = load_model("model.h5") 
 
