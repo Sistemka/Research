@@ -1,5 +1,6 @@
 import os
 import time
+from random import shuffle
 
 from keras.models import load_model
 from PIL import Image
@@ -45,7 +46,9 @@ def optimized_output(input_tensor, next_step_accuracy_percent=0.5, next_step_poi
         currently_accepted_items = []
         comparing_list = []
         # SELECT * from all_tensors WHERE "type" == label
-        for file in os.listdir(os.path.join(base_dir, label)):
+        all_files =  os.listdir(os.path.join(base_dir, label))
+        shuffle(all_files)
+        for file in all_files:
             file_path = os.path.join(base_dir, label, file)  # GET url field
             comparing_tensor = np.expand_dims(img2vec_that_saves_proportions(
                 file_path), 0)  # change img2vec if needed
@@ -53,6 +56,7 @@ def optimized_output(input_tensor, next_step_accuracy_percent=0.5, next_step_poi
             comparing_list.append(compare_result)
             if compare_result > comparing_percent:
                 currently_accepted_items.append(file_path)
+            # probably             =         is better
             if len(comparing_list) > next_step_point and sum(comparing_list) / len(comparing_list) < next_step_accuracy_percent:
                 break
         matching_items.extend(currently_accepted_items)
