@@ -33,10 +33,10 @@ def img2vec_that_saves_proportions(image_path):
     return tf.keras.preprocessing.image.img_to_array(img=make_square(Image.open(image_path)))
 
 
-all_labels = os.listdir(base_dir)
+all_labels = os.listdir(base_dir) # укажи пожалуйста в base_dir дерикторию в которой лежат фотки. не придется руками забивать лейблы
 # SELECT * from labels
 
-input_tensor = np.expand_dims(img2vec_that_saves_proportions("image.jpg"), 0)
+input_tensor = np.expand_dims(img2vec_that_saves_proportions("image.jpg"), 0) #надо сделать из фотки тензор
 
 
 # next_step_point это минимальное количество фоток для следующего шага
@@ -45,18 +45,15 @@ def optimized_output(input_tensor, next_step_accuracy_percent=0.5, next_step_poi
     for label in all_labels:
         currently_accepted_items = []
         comparing_list = []
-        # SELECT * from all_tensors WHERE "type" == label
-        all_files =  os.listdir(os.path.join(base_dir, label))
-        shuffle(all_files)
-        for file in all_files:
-            file_path = os.path.join(base_dir, label, file)  # GET url field
-            comparing_tensor = np.expand_dims(img2vec_that_saves_proportions(
-                file_path), 0)  # change img2vec if needed
-            compare_result = model.predict([input_tensor, comparing_tensor])
+        all_vectors = Vectors.select().where(Vectors.type == label)
+        shuffle(all_vectors)
+        for v in all_vectors:
+            vec = np.frombuffer(v.vector, dtype=='float32').reshape((224,224,3))
+            comparing_tensor = np.expand_dims(vec, 0)
+            compare_result = model.predict([input_tensor, comparing_tensor])[0][0]
             comparing_list.append(compare_result)
             if compare_result > comparing_percent:
-                currently_accepted_items.append(file_path)
-            # probably             =         is better
+                currently_accepted_items.append(v.url)
             if len(comparing_list) > next_step_point and sum(comparing_list) / len(comparing_list) < next_step_accuracy_percent:
                 break
         matching_items.extend(currently_accepted_items)
