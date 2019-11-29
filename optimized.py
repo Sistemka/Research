@@ -53,7 +53,7 @@ def optimized_output(input_tensor, next_step_accuracy_percent=0.5, next_step_poi
             compare_result = model.predict([input_tensor, comparing_tensor])[0][0]
             comparing_list.append(compare_result)
             if compare_result > comparing_percent:
-                currently_accepted_items.append(v.url)
+                currently_accepted_items.append({"url": v.url, "type": label})
             if len(comparing_list) > next_step_point and sum(comparing_list) / len(comparing_list) < next_step_accuracy_percent:
                 break
         matching_items.extend(currently_accepted_items)
