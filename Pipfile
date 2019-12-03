@@ -12,6 +12,13 @@ tensorflow = "*"
 jupyter = "*"
 matplotlib = "*"
 pillow = "*"
+h5py = "*"
+faiss = "*"
+sistemka = {editable = true,git = "https://github.com/Sistemka/Sistemka.git"}
+requests = "*"
+pandas = "*"
+scipy = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.7"
